@@ -10,6 +10,7 @@ var connection = require('./connection');
 var routes = require('./routes');
 var cors = require('./controllers/cors');
 
+
 // Middlewares
 
 app.use(cors.permisos);
