@@ -1,0 +1,15 @@
+{ //inicio de configuracion
+	"vsicons.presets.angular": false,
+
+	 "deploy": {
+        "targets": [           
+            {
+                "type": "local",
+                "name": "api",
+                "description": "copia a colegiosantaana.local",
+                "dir": "\\\\servidor-bd\\web\\api",               
+            }
+        ]
+    }
+
+} // fin de configuracion
