@@ -1,4 +1,4 @@
-var db = require('./consultas');
+var db = require('../models/consultas');
 var path = require('path');
 
 function http() {

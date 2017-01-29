@@ -1,6 +1,6 @@
 var conexion = require('./connection');
 var sql = require('mssql');
-var service = require('./service');
+var service = require('../services/service');
 var error01 = 'Error conexion servidor SQL';
 
 function MetodosDB() {

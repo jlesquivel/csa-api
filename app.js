@@ -6,8 +6,8 @@ var app = express();
 app.use(bodyparser.urlencoded({extended: true}));
 app.use(bodyparser.json());
 
-var connection = require('./connection');
-var routes = require('./routes');
+var connection = require('./models/connection');
+var routes = require('./router/routes');
 var cors = require('./controllers/cors');
 
 
