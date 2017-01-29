@@ -22,8 +22,7 @@ routes.configurar(app);
 
 connection.obtener(function (err) {
     if (err) {
-        console.log('|||Servidor base datos no encontrado');
-        
+        console.log('|||Servidor base datos no encontrado..');        
         
     } else {
         // carga el servidor
