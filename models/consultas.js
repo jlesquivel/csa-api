@@ -1,7 +1,7 @@
 var conexion = require('./connection');
 var sql = require('mssql');
 var service = require('../services/service');
-var error01 = 'Error conexion servidor SQL';
+var error01 = 'Error conexión servidor datos';
 
 function MetodosDB() {
     // aqui se implementa todas las operaciones con la base de datos
@@ -13,22 +13,22 @@ function MetodosDB() {
     this.respToken = function (usuario, clave, res) {
         conexion.obtener(function (err) {
             if (err) {
-                res.send({estado: error01})
+                res.status(503).send({ estado: error01 })
             } else {
                 var request = new sql.Request(conexion);
-               // console.log('< petición ingreso :', usuario);
+                // console.log('< petición ingreso :', usuario);
                 request.input('usuario', usuario);
                 request.query('Select * from usuarios where correo=@usuario', function (err, resultado) {
                     if (err)
-                        res.send({estado: 'error'});
+                        res.send({ estado: 'error' });
                     else {
                         //console.log(resultado[0]);
                         if (resultado[0] == undefined) {
-                            res.status(200).send({  success: false, message: 'Usuario No Existe. '});
+                            res.status(200).send({ success: false, message: 'Usuario No Existe. ' });
                         } else {
 
                             if (resultado[0].clave != clave) {
-                                res.send({ success: false, message: 'Clave incorrecta.'});
+                                res.send({ success: false, message: 'Clave incorrecta.' });                               
                             } else {
                                 // return the information including token as JSON
                                 res.json({
@@ -36,44 +36,52 @@ function MetodosDB() {
                                     message: 'Ingreso satisfactorio!!!',
                                     token: service.createToken(resultado[0])
                                 });
+                                conexion.cerrar()
                             }
                         }
                     }
+
                 })
             }
         })
+
+
     };// ==================================================================
 
 
     this.seleccionar = function (res) {
         conexion.obtener(function (err) {
             if (err) {
-                res.send({estado: error01})
+                res.send({ estado: error01 })
             } else {
                 var request = new sql.Request(conexion);
                 request.query('Select * from materia', function (err, resultado) {
                     res.send(resultado);
+                    conexion.cerrar()
                 })
             }
         });
-    };
+
+    }; // =====================================================================
 
     this.ListaClase = function (ano, nivel, grupo, res) {
         conexion.obtener(function (err) {
             if (err) {
-                res.send({estado: error01})
+                res.send({ estado: error01 })
             } else {
                 var request = new sql.Request(conexion);
                 request.input('ano', sql.Int, ano);
                 request.input('nivel', sql.VarChar(15), nivel);
                 request.input('grupo', sql.VarChar(2), grupo);
-                request.execute('spListaClase', function (err, recordsets, returnValue, affected) {
-                    if (recordsets.length = 0) {
-                        res.send({estado: error01})
+                request.execute('spListaClase', function (err, recordsets, returnValue) {
+
+                    if (recordsets.length == 0) {
+                        res.send({ estado: error01 })
                     } else {
-                        res.send(recordsets);
-                        console.log(recordsets[0].length);
+                        res.send(recordsets[0]);
+                        //console.log(recordsets[0]);
                     }
+                    conexion.cerrar()
                 })
             }
         })
@@ -82,9 +90,8 @@ function MetodosDB() {
     this.ListaClaseAusencias = function (ano, nivel, grupo, fecha, leccion, res) {
         conexion.obtener(function (err) {
             if (err) {
-                res.send({estado: error01})
+                res.send({ estado: error01 })
             } else {
-
                 //convierte de string a fecha2 el parametro fecha
                 var partes = fecha.split('-');
                 var fecha2 = new Date(partes[2], partes[1] - 1, partes[0]);
@@ -98,6 +105,7 @@ function MetodosDB() {
                 request.execute('spListaClaseAusencias', function (err, recordsets, returnValue) {
                     res.send(recordsets[0]);
                     //console.log(recordsets[0])    // para debug en consola  servidor
+                    conexion.cerrar()
                 })
             }
         });
@@ -108,7 +116,7 @@ function MetodosDB() {
         var isql = '';
         conexion.obtener(function (err) {
             if (err) {
-                res.send({estado: error01})
+                res.send({ estado: error01 })
             } else {
                 // console.log('id:=',id);
                 var request = new sql.Request(conexion);
@@ -120,7 +128,8 @@ function MetodosDB() {
                     request.input('tipo', sql.VarChar(10), estado);
 
                     request.query(isql, function (err, resultado) {
-                        res.send({estado: 'ausencia creada'});
+                        res.send({ estado: 'ausencia creada' });
+                        conexion.cerrar()
                     });
                 } else {
                     //console.log('cambiarEstadoAusencia = > actualiza');
@@ -130,8 +139,10 @@ function MetodosDB() {
                     request.query(isql, function (err, resultado) {
                         if (err) {
                             res.send(err.message);
+                            conexion.cerrar()
                         } else {
-                            res.send({estado: 'Actualizado'});
+                            res.send({ estado: 'Actualizado' });
+                            conexion.cerrar()
                         }
                     })
                 }
@@ -140,7 +151,39 @@ function MetodosDB() {
     }; // ==================================================================
 
 
+    this.grupos = function (ano, resp) {
+        conexion.obtener(function (err) {
+            if (err) {
+                resp.send({ estado: error01 })                
+            } else {
+                var request = new sql.Request(conexion);
+                var isql = "SELECT (nivel+'-'+grupo) as grupo FROM grupos WHERE ano = @ano"
+                request.input('ano', sql.Int, ano);
+                request.query(isql, function (err, resultado) {
+                    if (err)
+                        resp.send({ estado: 'error en consulta' });
+                    else {
+                        //console.log(resultado[0]);
+                        if (resultado[0] == undefined) {
+                            resp.status(400).send({ success: false, message: 'sin datos. ' });
+                            conexion.cerrar()
+                        } else {
+                            resp.status(200).send(resultado)
+                            conexion.cerrar()
+                        }
+                    }
+                }) // fin query
+            }
+        });
+
+    } // fin consulta grupos
+
 }
 
 module.exports = new MetodosDB();
+
+
+
+
+
 

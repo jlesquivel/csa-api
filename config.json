@@ -1,6 +1,6 @@
 
 {
-  "servidor_api":"http://servidor-bd:8000"
+  "servidor_api":"http://localhost:8000"
 
 
 }

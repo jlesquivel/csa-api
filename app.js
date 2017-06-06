@@ -3,7 +3,7 @@ var bodyparser = require('body-parser');
 var config = require('./config');
 
 var app = express();
-app.use(bodyparser.urlencoded({extended: true}));
+app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 
 var connection = require('./models/connection');
@@ -22,12 +22,11 @@ routes.configurar(app);
 
 connection.obtener(function (err) {
     if (err) {
-        console.log('|||Servidor base datos no encontrado..');        
-        
-    } else {
-        // carga el servidor
-        var server = app.listen(8000, '0.0.0.0', function () {
-            console.log('\n RESTf [servidor-bd] en el puerto,', server.address().port);
-        });
+        console.log('|||Servidor base datos no encontrado..');
     }
+    // carga el servidor
+    var server = app.listen(8000, '0.0.0.0', function () {
+        console.log('\n RESTf [servidor-bd] en el puerto,..', server.address().port);
+    });
+
 });

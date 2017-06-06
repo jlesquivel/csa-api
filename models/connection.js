@@ -21,6 +21,10 @@ function Conexion() {
         })
     };
 
+    this.cerrar = function (callback) {
+        // console.log("connn close...");
+        sql.close()
+    };
 }
 
 module.exports = new Conexion();
