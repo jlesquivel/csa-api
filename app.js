@@ -14,8 +14,8 @@ var cors = require('./controllers/cors');
 // Middlewares
 
 app.use(cors.permisos);
-
 app.set('superSecret', config.secret);
+
 
 connection.inicia();
 routes.configurar(app);
@@ -24,6 +24,7 @@ connection.obtener(function (err) {
     if (err) {
         console.log('|||Servidor base datos no encontrado..');
     }
+    connection.cerrar()
     // carga el servidor
     var server = app.listen(8000, '0.0.0.0', function () {
         console.log('\n RESTf [servidor-bd] en el puerto,..', server.address().port);

@@ -1,20 +1,19 @@
 var sql = require('mssql');
 
 function Conexion() {
-    this.conn = null;
+    this.config = null;
 
     this.inicia = function () {
-        this.conn = {
+        this.config = {
             user: 'sa',
             password: '123',
             server: 'servidor-bd',
             database: 'colegio'
-
         }
     };
 
     this.obtener = function (callback) {
-        sql.connect(this.conn, function (err) {
+        sql.connect(this.config, function (err) {
             if (err)
                 console.log(err.message);
             callback(err);
