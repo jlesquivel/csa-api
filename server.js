@@ -25,12 +25,7 @@ var lex = require('greenlock-express').create({
 // handles acme-challenge and redirects to https
 require('http')
   .createServer(lex.middleware(require('redirect-https')()))
-<<<<<<< HEAD
-  .listen(8000, function () {
-=======
-  .listen(8080, function () {
->>>>>>> 9be7e24f9cd4cb7d321556b1e7c5988b21a80141
-    console.log('Listening for ACME http-01 challenges on', this.address());
+  .listen(8000, function () {    console.log('Listening for ACME http-01 challenges on', this.address());
   });
 
 var express = require('express');
