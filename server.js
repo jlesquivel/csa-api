@@ -1,33 +1,7 @@
-'use strict';
 
-function approveDomains(opts, certs, cb) {
-  console.log('opts are', opts);
-  if (certs) {
-    opts.domains = certs.altnames;
-  }
-  else {
-    opts.domains = ['csalib.ddns.net'];
-    opts.email = 'jlesquivel@hotmail.com';
-    opts.agreeTos = true;
-  }
-  cb(null, { options: opts, certs: certs });
-}
+const https = require("https"),
+fs = require("fs");
 
-var lex = require('greenlock-express').create({
-  // server: 'staging',
-  server: 'https://acme-v02.api.letsencrypt.org/directory',
-  debug: true,
-  configDir: 'certs/etc',
-  approveDomains: approveDomains
-});
-
-
-// handles acme-challenge and redirects to https
-require('http')
-  .createServer(lex.middleware(require('redirect-https')()))
-  .listen(8000, function () {
-    console.log('Listening for ACME http-01 challenges on', this.address());
-  });
 
 var express = require('express');
 var bodyparser = require('body-parser');
@@ -41,6 +15,11 @@ var connection = require('./models/connection');
 var routes = require('./router/routes');
 var cors = require('./controllers/cors');
 
+const options = {
+    key: fs.readFileSync("/xampp/apache/conf/ssl.key/server.key"),
+    cert: fs.readFileSync("/xampp/apache/conf/ssl.crt/server.crt")
+  };
+
 // Middlewares
 
 app.use(cors.permisos);
@@ -49,9 +28,13 @@ app.set('superSecret', config.secret);
 connection.inicia();
 routes.configurar(app);
 
-// handles your app
-require('https')
-  .createServer(lex.httpsOptions, lex.middleware(app))
-  .listen(1010, function () {
-    console.log('Listening for ACME tls-sni-01 and serve app on', this.address());
-  });
+connection.obtener(function (err) {
+  if (err) {
+    console.log('|||Servidor base datos no encontrado...');
+  }
+  connection.cerrar();
+  // carga el servidor
+  app.listen(8000);
+  https.createServer(options, app).listen(1010);
+});
+
