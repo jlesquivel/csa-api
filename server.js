@@ -6,7 +6,7 @@ function approveDomains(opts, certs, cb) {
     opts.domains = certs.altnames;
   }
   else {
-    opts.domains = ['csalib.ddns.net:8443'];
+    opts.domains = ['csalib.ddns.net'];
     opts.email = 'jlesquivel@hotmail.com';
     opts.agreeTos = true;
   }
@@ -15,7 +15,7 @@ function approveDomains(opts, certs, cb) {
 
 var lex = require('greenlock-express').create({
   // server: 'staging',
-  server: 'https://acme-v01.api.letsencrypt.org/directory',
+  server: 'https://acme-v02.api.letsencrypt.org/directory',
   debug: true,
   configDir: 'certs/etc',
   approveDomains: approveDomains
@@ -25,7 +25,7 @@ var lex = require('greenlock-express').create({
 // handles acme-challenge and redirects to https
 require('http')
   .createServer(lex.middleware(require('redirect-https')()))
-  .listen(8080, function () {
+  .listen(8000, function () {
     console.log('Listening for ACME http-01 challenges on', this.address());
   });
 
@@ -52,6 +52,6 @@ routes.configurar(app);
 // handles your app
 require('https')
   .createServer(lex.httpsOptions, lex.middleware(app))
-  .listen(8443, function () {
+  .listen(1010, function () {
     console.log('Listening for ACME tls-sni-01 and serve app on', this.address());
   });

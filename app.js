@@ -24,7 +24,7 @@ connection.obtener(function (err) {
   }
   connection.cerrar();
   // carga el servidor
-  var server = app.listen(8000, '0.0.0.0', function () {
+  var server = app.listen(1010, '0.0.0.0', function () {
     console.log('\n RESTf [servidor-bd] en el puerto,..', server.address().port);
   });
 });
