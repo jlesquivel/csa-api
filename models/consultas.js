@@ -166,6 +166,31 @@ function MetodosDB() {
       }
     });
   }; // fin consulta grupos
-}
 
+this.notas_prof = function (id_emp, periodo, res) {
+
+  conexion.obtener(function(err) {
+    if (err) {
+      res.send({ estado: error01 });
+    } else {
+    
+      var request = new sql.Request(conexion);
+      request.input('id_emp', sql.Int, id_emp);
+      request.input('periodo', sql.VarChar(1), periodo);
+      
+      request.execute('web.notas_prof', function(err, recordsets, returnValue) {
+        res.send(recordsets[0]);
+        //console.log(recordsets[0])    // para debug en consola  servidor
+        conexion.cerrar();
+      });
+    }
+  });// fin obtener
+  
+} //fin notas_prof
+
+
+
+
+
+} //fin MetodosDB
 module.exports = new MetodosDB();

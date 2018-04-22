@@ -8,7 +8,7 @@ var bodyparser = require('body-parser');
 var config = require('./config');
 
 var app = express();
-app.use(bodyparser.urlencoded({ extended: true }));
+app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 
 var connection = require('./models/connection');

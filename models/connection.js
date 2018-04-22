@@ -8,7 +8,8 @@ function Conexion() {
       user: 'sa',
       password: '123',
       server: 'servidor-bd',
-      database: 'colegio'
+      database: 'colegio',
+      parseJSON: true
     };
   };
 

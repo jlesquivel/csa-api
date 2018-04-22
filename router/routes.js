@@ -52,6 +52,12 @@ function http() {
                 db.grupos(soli.params.ano, resp);
             });
 
+        app.get('/notas_prof/:id_emp/:periodo',        
+            function (soli, resp) {
+                db.notas_prof(soli.params.id_emp,soli.params.periodo,resp);
+            }        
+        );
+
 
     }
 }
